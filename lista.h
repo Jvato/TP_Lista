@@ -7,6 +7,10 @@
 struct lista;
 typedef struct lista lista_t;
 
+struct lista_iter;
+typedef lista_iter lista_iter_t;
+
+
 // Crea una lista
 // Post: devuelve una lista vacia
 lista_t *lista_crear(void);
@@ -59,4 +63,35 @@ void lista_destruir(lista_t *lista, void (*destruir_dato)(void *));
 
 void pruebas_lista_estudiante(void);
 
+// Crea un iterador de lista
+// Post: Se crea u iterador que apunta al inicio de la lista
+// Si el iterador esta en el inicio, el anterior apunta a NULL.
+lista_iter_t *lista_iter_crear(lista_t *lista);
+
+// Avanza al siguiente elemento
+// Pre: el iterador fue creado
+// Post: el iterador apunta al siguiete elemento
+// Devuelve true si avanzo al siguiente elemento, false en caso contrario
+bool lista_iter_avanzar(lista_iter_t *iter);
+
+// Devuelve el dato de el iterador actual
+// Pre: el iterador fue creado
+// Post: Devuelve el dato del elemento actual
+void *lista_iter_ver_actual(const lista_iter_t *iter);
+
+// Pregunta si el iterador esta al final
+// Pre: El iterador fue creado
+// Post: Devuelve true si el iterador esta al final, luego del ultimo elemeto de la lista
+bool lista_iter_al_final(const lista_iter_t *iter);
+
+// Destruye el iterado
+// Pre: EL iterador fue creado
+// Post: Destruye el iterador
+void lista_iter_destruir(lista_iter_t *iter);
+
+// Inserta un elemento en la lista
+// Pre: El iterador fue creado
+// Post: se agrego un elemento a la lista.
+bool lista_iter_insertar(lista_iter_t *iter, void *dato);
+void *lista_iter_borrar(lista_iter_t *iter);
 #endif // LISTA_H
