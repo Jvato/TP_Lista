@@ -39,10 +39,33 @@ static void prueba_listar_numeros(void){
     lista_destruir(lista, NULL);
 }
 
+void prueba_lista_iterador_externo_crear() {
+	lista_t * lista = lista_crear();
+	print_test("Se creo una lista vacia",lista != NULL);
+	lista_insertar_primero(lista,"TP1");
+	lista_iter_t * iter = lista_iter_crear(lista);
+	print_test("Se creo un iterador externo",iter != NULL);
+	lista_destruir(lista,NULL);
+	lista_iter_destruir(iter);
+}
+
+void prueba_lista_iterador_externo_crear_apunta_al_inicio() {
+	lista_t * lista = lista_crear();
+	print_test("Se creo una lista vacia",lista != NULL);
+	int dato[1];
+	print_test("Se inserto un elemento en la lista",lista_insertar_primero(lista,dato) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	print_test("Se creo un iterador externo",iter != NULL);
+	print_test("El iterador apunta al primer elemento de la lista", lista_iter_ver_actual(iter) == dato);
+	lista_iter_destruir(iter);	
+	lista_destruir(lista,NULL);
+}
 
 void pruebas_lista_estudiante(){
     prueba_lista_vacia();
     prueba_listar_numeros();
+    prueba_lista_iterador_externo_crear();
+    prueba_lista_iterador_externo_crear_apunta_al_inicio();
 }
 
 

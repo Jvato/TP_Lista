@@ -64,38 +64,38 @@ void lista_destruir(lista_t *lista, void (*destruir_dato)(void *));
 void pruebas_lista_estudiante(void);
 
 // Crea un iterador de lista
-// Post: Se crea u iterador que apunta al inicio de la lista
+// Post: Se crea un iterador que apunta al inicio de la lista
 // Si el iterador esta en el inicio, el anterior apunta a NULL.
 lista_iter_t *lista_iter_crear(lista_t *lista);
 
 // Avanza al siguiente elemento
-// Pre: el iterador fue creado
-// Post: el iterador apunta al siguiete elemento
+// Pre: el iterador fue creado y apunta algun elemento de la lista o esta al final de la misma
+// Post: el iterador apunta al siguiete elemento o al final de la lista
 // Devuelve true si avanzo al siguiente elemento, false en caso contrario
 bool lista_iter_avanzar(lista_iter_t *iter);
 
 // Devuelve el dato de el iterador actual
-// Pre: el iterador fue creado
+// Pre: EL iterador fue creado y apunta algun elemento de la lista o esta al final de la misma
 // Post: Devuelve el dato del elemento actual
 void *lista_iter_ver_actual(const lista_iter_t *iter);
 
 // Pregunta si el iterador esta al final
-// Pre: El iterador fue creado
-// Post: Devuelve true si el iterador esta al final, luego del ultimo elemeto de la lista
+// Pre: EL iterador fue creado y apunta algun elemento de la lista o esta al final de la misma
+// Post: Devuelve true si el iterador esta al final o false en caso contrario
 bool lista_iter_al_final(const lista_iter_t *iter);
 
 // Destruye el iterado
-// Pre: EL iterador fue creado
+// Pre: EL iterador fue creado y apunta algun elemento de la lista o esta alfinal de la misma
 // Post: Destruye el iterador
 void lista_iter_destruir(lista_iter_t *iter);
 
 // Inserta un elemento en la lista
-// Pre: El iterador fue creado
+// Pre: EL iterador fue creado y apunta algun elemento de la lista o esta al final de la misma
 // Post: se agrego un elemento a la lista.
 bool lista_iter_insertar(lista_iter_t *iter, void *dato);
 
 // Elimina un elemento de la lista y devuelve el dato por copia
-// Pre: el iterador fue creado.
-// Post: la lista tiene un elemento
+// Pre: EL iterador fue creado y apunta algun elemento de la lista o esta al final de la misma
+// Post: la lista tiene un elemento menos 
 void *lista_iter_borrar(lista_iter_t *iter);
 #endif // LISTA_H
