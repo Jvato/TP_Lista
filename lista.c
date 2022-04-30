@@ -162,11 +162,29 @@ void lista_iter_destruir(lista_iter_t *iter) {
 bool lista_iter_insertar(lista_iter_t *iter, void *dato) {
 	nodo_t * nodo_nuevo = _nodo_crear(dato);
 	if (nodo_nuevo == NULL) return false;
-	if (iter->anterior == NULL) 
+	if (iter->lista->prim == iter->lista->ult)
+		iter->lista->ult = NULL;	
+	if (iter->lista->prim == iter->actual) 
 		iter->lista->prim = nodo_nuevo;
 	else 
 		iter->anterior->prox = nodo_nuevo;
 	nodo_nuevo->prox = iter->actual;
 	iter->actual = nodo_nuevo;
 	return true;
+}
+
+void *lista_iter_borrar(lista_iter_t *iter) {
+	void *dato_aux = iter->actual->dato;
+	nodo_t * a_borrar = iter->actual;
+	// En caso que el iterador actual apunte al primero
+	if (iter->lista->prim == iter->actual)
+		iter->lista->prim = iter->actual->prox;
+	else
+		iter->anterior->prox = iter->actual->prox;
+	iter->actual = iter->actual->prox;
+	// EN caso que sea el ultimo
+	if (a_borrar->prox == NULL)
+		iter->lista->ult = NULL;
+	_nodo_destruir(a_borrar);
+	return dato_aux;
 }

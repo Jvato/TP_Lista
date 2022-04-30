@@ -8,7 +8,7 @@ struct lista;
 typedef struct lista lista_t;
 
 struct lista_iter;
-typedef lista_iter lista_iter_t;
+typedef struct lista_iter lista_iter_t;
 
 
 // Crea una lista
@@ -93,5 +93,9 @@ void lista_iter_destruir(lista_iter_t *iter);
 // Pre: El iterador fue creado
 // Post: se agrego un elemento a la lista.
 bool lista_iter_insertar(lista_iter_t *iter, void *dato);
+
+// Elimina un elemento de la lista y devuelve el dato por copia
+// Pre: el iterador fue creado.
+// Post: la lista tiene un elemento
 void *lista_iter_borrar(lista_iter_t *iter);
 #endif // LISTA_H
