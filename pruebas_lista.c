@@ -39,6 +39,18 @@ static void prueba_listar_numeros(void){
     lista_destruir(lista, NULL);
 }
 
+
+
+
+
+
+
+
+
+
+
+/* Pruebas con iterador externo */
+
 void prueba_lista_iterador_externo_crear() {
 	lista_t * lista = lista_crear();
 	print_test("Se creo una lista vacia",lista != NULL);
@@ -61,11 +73,78 @@ void prueba_lista_iterador_externo_crear_apunta_al_inicio() {
 	lista_destruir(lista,NULL);
 }
 
+void prueba_lista_iterador_externo_recorrer_lista() {
+	lista_t * lista = lista_crear();
+	int v[10];
+	for (size_t i = 0; i < 9; i++) {
+		if (lista_insertar_ultimo(lista,v+i) == false)
+			return;
+	}
+	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,v+9) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	print_test("Se creo un iterado y apunta al primer elemento de la lista", iter != NULL);
+	for (size_t i = 0; i < 9; i++) {
+		if (lista_iter_ver_actual(iter) != v+i) {
+			lista_iter_destruir(iter);
+			lista_destruir(lista,NULL);
+			return;
+		}
+		lista_iter_avanzar(iter);
+	}
+	print_test("Lo datos obtenidos con el iterador coinciden con los cargados en la lista",lista_iter_ver_actual(iter) == v+9);
+	lista_iter_destruir(iter);
+	lista_destruir(lista,NULL);
+}
+
+void prueba_lista_iterador_externo_esta_al_final() {
+	lista_t * lista = lista_crear();
+	int v[10];
+	for (size_t i = 0; i < 9; i++) {
+		if (lista_insertar_ultimo(lista,v+i) == false) {
+			lista_destruir(lista,NULL);
+			return;
+		}
+	}
+	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,v+9) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	for (size_t i = 0; i < 8; i++) {
+		if (lista_iter_al_final(iter) == true) {
+			lista_iter_destruir(iter);
+			lista_destruir(lista,NULL);
+			return;
+		}
+	}
+	print_test("Se recorrio la lista por 9 elementos y el iterador esta aun no llega al final", lista_iter_al_final(iter) == false);
+	lista_iter_destruir(iter);
+	lista_destruir(lista,NULL);
+
+}
+
 void pruebas_lista_estudiante(){
-    prueba_lista_vacia();
-    prueba_listar_numeros();
-    prueba_lista_iterador_externo_crear();
-    prueba_lista_iterador_externo_crear_apunta_al_inicio();
+	puts("PRUEBA DE LISTA VACIA");
+   	prueba_lista_vacia();
+
+	puts("PRUEBA DE LISTA CARGAR NUMEROS");
+   	prueba_listar_numeros();
+
+	puts("PROBAR QUE SE PUEDE CREAR UN ITERADOR EXTERNO");
+	prueba_lista_iterador_externo_crear();
+
+	puts("PROBAR QUE EL ITERADOR CREADO APUNTA AL INICIO DE LA LISTA");
+    	prueba_lista_iterador_externo_crear_apunta_al_inicio();
+
+	puts("PROBAR QUE EL ITERADOR MUESTRA LOS MISMO DATOS DE UNA LISTA CUANDO SE RECORRE CON UN ITERADOR");
+    	prueba_lista_iterador_externo_recorrer_lista();
+
+	prueba_lista_iterador_externo_esta_al_final();
+
+
+
+
+
+
+
+
 }
 
 
