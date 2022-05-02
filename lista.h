@@ -98,4 +98,11 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato);
 // Pre: EL iterador fue creado y apunta algun elemento de la lista o esta al final de la misma
 // Post: la lista tiene un elemento menos 
 void *lista_iter_borrar(lista_iter_t *iter);
+
+// Recorre la lista hasta que visitar sea false y va aplicando la funcion a cada dato,
+// utiliza el parametro extra como condicion de corte
+// Pre: La lista fue creada
+// Post: Se le aplico la funcion visitar a la cantidad de objetos deseados
+void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra);
+
 #endif // LISTA_H

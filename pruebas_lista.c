@@ -39,16 +39,6 @@ static void prueba_listar_numeros(void){
     lista_destruir(lista, NULL);
 }
 
-
-
-
-
-
-
-
-
-
-
 /* Pruebas con iterador externo */
 
 void prueba_lista_iterador_externo_crear() {
@@ -117,7 +107,53 @@ void prueba_lista_iterador_externo_esta_al_final() {
 	print_test("Se recorrio la lista por 9 elementos y el iterador esta aun no llega al final", lista_iter_al_final(iter) == false);
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
+}
 
+bool imprimir_un_item(void *elemento, void *extra) {
+    int *contador = extra;
+    printf("%d. %s\n", ++(*contador), (char *) elemento);
+    return true;
+}
+
+void prueba_lista_iterador_interno_todos_los_items(void){
+    printf("INICIO DE LAS PRUEBAS CON ITERADOR INTERNO DE RECORRER TODOS LOS ITEMS\n");
+    lista_t* lista = lista_crear();
+
+    print_test("Se pudo insertar la leche",lista_insertar_ultimo(lista, "leche") == true);
+    print_test("Se pudieron insertar los huevos",lista_insertar_ultimo(lista, "huevos") == true);
+    print_test("Se pudo insertar el pan",lista_insertar_ultimo(lista, "pan") == true);
+    print_test("Se pudo insertar la mermelada",lista_insertar_ultimo(lista, "mermelada") == true);
+
+	int num_items = 0;
+	lista_iterar(lista, imprimir_un_item, &num_items);
+	print_test("El numero de items es 4", num_items == 4);
+
+	lista_destruir(lista, NULL);
+}
+
+bool imprimir_dos_datos(void *dato, void *extra){
+	if(*(int*)extra >= 2){
+		return false;
+	}
+    int *contador = extra;
+    printf("%d. %s\n", ++(*contador), (char *) dato);
+    return true;
+}
+
+void prueba_lista_iterador_interno_con_tope(void){
+    printf("INICIO DE LAS PRUEBAS CON ITERADOR INTERNO CON TOPE\n");
+    lista_t* lista = lista_crear();
+
+    print_test("Se pudo insertar la leche",lista_insertar_ultimo(lista, "leche") == true);
+    print_test("Se pudieron insertar los huevos",lista_insertar_ultimo(lista, "huevos") == true);
+    print_test("Se pudo insertar el pan",lista_insertar_ultimo(lista, "pan") == true);
+    print_test("Se pudo insertar la mermelada",lista_insertar_ultimo(lista, "mermelada") == true);
+
+	int num_items = 0;
+	lista_iterar(lista, imprimir_dos_datos, &num_items);
+	print_test("El numero de items es 2", num_items == 2);
+
+	lista_destruir(lista, NULL);
 }
 
 void pruebas_lista_estudiante(){
@@ -138,15 +174,9 @@ void pruebas_lista_estudiante(){
 
 	prueba_lista_iterador_externo_esta_al_final();
 
-
-
-
-
-
-
-
+	prueba_lista_iterador_interno_todos_los_items();
+	prueba_lista_iterador_interno_con_tope();
 }
-
 
 #ifndef CORRECTOR
 

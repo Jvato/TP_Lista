@@ -112,11 +112,11 @@ void lista_destruir(lista_t *lista, void (*destruir_dato)(void *)){
 	free(lista);
 }
 
-typedef struct lista_iter {
+struct lista_iter {
 	struct nodo * actual;
 	struct nodo * anterior;
 	struct lista * lista;
-} lista_iter_t;
+};
 
 lista_iter_t *lista_iter_crear(lista_t *lista) {
 	lista_iter_t * iter = malloc(sizeof(lista_iter_t));
@@ -176,4 +176,11 @@ void *lista_iter_borrar(lista_iter_t *iter) {
 		iter->lista->ult = NULL;
 	_nodo_destruir(a_borrar);
 	return dato_aux;
+}
+
+void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra){
+	nodo_t* nodo = lista->prim;
+	while(nodo != NULL && visitar(nodo->dato, extra)){
+		nodo = nodo->prox;
+	}
 }
