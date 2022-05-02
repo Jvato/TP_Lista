@@ -159,6 +159,7 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato) {
 		iter->anterior->prox = nodo_nuevo;
 	nodo_nuevo->prox = iter->actual;
 	iter->actual = nodo_nuevo;
+	iter->lista->largo++;
 	return true;
 }
 
@@ -175,6 +176,7 @@ void *lista_iter_borrar(lista_iter_t *iter) {
 	if (a_borrar->prox == NULL)
 		iter->lista->ult = NULL;
 	_nodo_destruir(a_borrar);
+	iter->lista->largo--;
 	return dato_aux;
 }
 
