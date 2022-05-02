@@ -165,7 +165,7 @@ void prueba_lista_iterador_externo_recorrer_lista() {
 	lista_destruir(lista,NULL);
 }
 
-void prueba_lista_iterador_externo_esta_al_final() {
+void prueba_lista_iterador_externo_no_esta_al_final() {
 	lista_t * lista = lista_crear();
 	int v[10];
 	for (size_t i = 0; i < 9; i++) {
@@ -182,6 +182,7 @@ void prueba_lista_iterador_externo_esta_al_final() {
 			lista_destruir(lista,NULL);
 			return;
 		}
+	lista_iter_avanzar(iter);
 	}
 	print_test("Se recorrio la lista por 9 elementos y el iterador esta aun no llega al final", lista_iter_al_final(iter) == false);
 	lista_iter_destruir(iter);
@@ -189,9 +190,79 @@ void prueba_lista_iterador_externo_esta_al_final() {
 
 }
 
+void prueba_lista_iterador_externo_esta_al_final() {
+	lista_t * lista = lista_crear();
+	int v[10];
+	for (size_t i = 0; i < 9; i++) {
+		if (lista_insertar_ultimo(lista,v+i) == false) {
+			lista_destruir(lista,NULL);
+			return;
+		}
+	}
+	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,v+9) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	for (size_t i = 0; i < 10; i++) {
+		if (lista_iter_al_final(iter) == true || lista_iter_ver_actual(iter) != v+i) {
+			lista_iter_destruir(iter);
+			lista_destruir(lista,NULL);
+			return;
+		}
+	lista_iter_avanzar(iter);
+	}
+	lista_iter_avanzar(iter);
+	print_test("Se recorrio toda la lista con el iterador y estos coinciden con los que estan cargados en la lista", lista_iter_al_final(iter) == true);
+	lista_iter_destruir(iter);
+	lista_destruir(lista,NULL);
+
+}
+
+void prueba_lista_iterador_externo_insertar_con_lista_1_elemento() {
+	lista_t * lista = lista_crear();
+	lista_insertar_ultimo(lista,NULL);
+	print_test("Se creo una lista con 1 elemento", lista_insertar_ultimo(lista,NULL) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	int v[1];
+	print_test("Se agrego un elemento al inicio de la lista utilizando un iterador", lista_iter_insertar(iter,v) == true);
+	print_test("El iterador avanzo al siguiente elemento", lista_iter_avanzar(iter) == true);
+	print_test("El iterador no apunta al final de la lista", lista_iter_al_final(iter) == false);
+	print_test("El ultimo dato  coincide con el elemento inicial de la lista", lista_iter_ver_actual(iter) == NULL);
+	lista_iter_destruir(iter);
+	lista_destruir(lista,NULL);
+}
+
+void prueba_lista_iterador_externo_insertar_con_lista_varios_elemento() {
+	lista_t * lista = lista_crear();
+	int v[10];
+	lista_insertar_ultimo(lista,v);
+	lista_insertar_ultimo(lista,v+2);
+	lista_insertar_ultimo(lista,v+3);
+	print_test("Se creo una lista con 4 elemento", lista_insertar_ultimo(lista,v+4) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	print_test("El iterador avanzo al siguiente elemento de la lista", lista_iter_avanzar(iter) == true);
+	print_test("El iterador no apunta al final de la lista", lista_iter_al_final(iter) == false);
+	print_test("Se inserto un elemento en la posicion actual utilizando un iterador", lista_iter_insertar(iter,v+1) == true);
+	lista_iter_destruir(iter);
+	iter = lista_iter_crear(lista);
+	for (size_t i = 0; i < 4; i++) {
+		if (lista_iter_ver_actual(iter) != v+i) {
+			lista_iter_destruir(iter);
+			lista_destruir(lista,NULL);
+		}
+		lista_iter_avanzar(iter);
+	}
+	print_test("EL dato se agrego correctamente en la lista", lista_iter_ver_actual(iter) == v+4);
+	lista_iter_destruir(iter);
+	lista_destruir(lista,NULL);
+}
 void pruebas_lista_estudiante(){
 	puts("PRUEBA DE LISTA VACIA");
    	prueba_lista_vacia();
+
+	prueba_listar_NULL();
+
+	prueba_listar_volumen();
+
+	prueba_lista_destruir_con_free();
 
 	puts("PRUEBA DE LISTA CARGAR NUMEROS");
    	prueba_listar_numeros();
@@ -205,10 +276,17 @@ void pruebas_lista_estudiante(){
 	puts("PROBAR QUE EL ITERADOR MUESTRA LOS MISMO DATOS DE UNA LISTA CUANDO SE RECORRE CON UN ITERADOR");
     	prueba_lista_iterador_externo_recorrer_lista();
 
+	puts("Probar que el iterador no esta al final luego de recorer la lista y sin llegar al final");
+	prueba_lista_iterador_externo_no_esta_al_final();
+
+	puts("Probar que el iterador esta al final luego de recorrer todos los elementos");
 	prueba_lista_iterador_externo_esta_al_final();
 
+	puts("Probar insertar elemento a la lista que tiene un elemento y utilizando un iterador");
+	prueba_lista_iterador_externo_insertar_con_lista_1_elemento();
 
-
+	puts("Probar insertar un elemento en medio de la lista");
+	prueba_lista_iterador_externo_insertar_con_lista_varios_elemento();
 }
 
 
