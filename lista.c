@@ -40,17 +40,6 @@ bool lista_esta_vacia(const lista_t *lista) {
 	return (lista->prim == NULL && lista->ult == NULL && lista->largo == 0);
 }
 
-// bool lista_insertar_primero(lista_t *lista, void *dato) {
-// 	nodo_t * nodo_actual = _nodo_crear(dato);
-// 	if (nodo_actual == NULL) return false;
-// 	nodo_t * nodo_siguiente = lista->prim;
-
-// }
-
-// No entendi muy bien la implementacion que hiciste de lista_insertar_primero,
-// entonces no se si esta bien. Por las dudas deje una implementacion que creo 
-// que esta bien :)
-
 bool lista_insertar_primero(lista_t *lista, void *dato) {
 	nodo_t * nodo_actual = _nodo_crear(dato);
 	if (nodo_actual == NULL) return false;
