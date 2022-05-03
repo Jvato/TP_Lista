@@ -76,7 +76,8 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato){
 }
 
 void *lista_borrar_primero(lista_t *lista){
-	if(lista_esta_vacia(lista)) return NULL;
+	if (lista_esta_vacia(lista) == true)
+		return NULL;
 	void* dato = lista->prim->dato;
 	nodo_t* nodo_aux = lista->prim;
 	if (lista->prim == lista->ult)
@@ -89,12 +90,14 @@ void *lista_borrar_primero(lista_t *lista){
 
 
 void *lista_ver_primero(const lista_t *lista){
-	if(lista_esta_vacia(lista)) return NULL;
+	if (lista_esta_vacia(lista) == true)
+		return NULL;
 	return lista->prim->dato;
 }
 
 void *lista_ver_ultimo(const lista_t* lista){
-	if(lista_esta_vacia(lista)) return NULL;
+	if (lista_esta_vacia(lista) == true)
+		return NULL;
 	return lista->ult->dato;
 }
 
@@ -137,7 +140,7 @@ bool lista_iter_avanzar(lista_iter_t *iter) {
 }
 
 void *lista_iter_ver_actual(const lista_iter_t *iter) {
-	return iter->actual->dato;	
+	return (lista_iter_al_final(iter) == true) ? NULL : iter->actual->dato;	
 }
 
 bool lista_iter_al_final(const lista_iter_t *iter) {
@@ -151,8 +154,8 @@ void lista_iter_destruir(lista_iter_t *iter) {
 bool lista_iter_insertar(lista_iter_t *iter, void *dato) {
 	nodo_t * nodo_nuevo = _nodo_crear(dato);
 	if (nodo_nuevo == NULL) return false;
-	if (iter->lista->prim == iter->lista->ult)
-		iter->lista->ult = NULL;	
+	if (lista_iter_al_final(iter) == true)
+		iter->lista->ult = nodo_nuevo;
 	if (iter->lista->prim == iter->actual) 
 		iter->lista->prim = nodo_nuevo;
 	else 
@@ -164,6 +167,8 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato) {
 }
 
 void *lista_iter_borrar(lista_iter_t *iter) {
+	if (lista_iter_al_final(iter) == true)
+		return NULL;
 	void *dato_aux = iter->actual->dato;
 	nodo_t * a_borrar = iter->actual;
 	// En caso que el iterador actual apunte al primero
@@ -174,7 +179,7 @@ void *lista_iter_borrar(lista_iter_t *iter) {
 	iter->actual = iter->actual->prox;
 	// EN caso que sea el ultimo
 	if (a_borrar->prox == NULL)
-		iter->lista->ult = NULL;
+		iter->lista->ult = iter->anterior;
 	_nodo_destruir(a_borrar);
 	iter->lista->largo--;
 	return dato_aux;

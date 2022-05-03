@@ -3,18 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void prueba_lista_vacia(void){
-    printf("INICIO DE LAS PRUEBAS CON LISTA VACIA\n");
-    lista_t* lista = lista_crear();
+//static void prueba_lista_vacia(void){
+//    printf("INICIO DE LAS PRUEBAS CON LISTA VACIA\n");
+//    lista_t* lista = lista_crear();
 
-    print_test("La lista esta vacia", lista_esta_vacia(lista) == true);
-    print_test("Borrar el primer elemento de la lista da NULL", lista_borrar_primero(lista) == NULL);
-    print_test("Ver el primer elemento de la lista devuelve NULL", lista_ver_primero(lista) == NULL);
-    print_test("Ver el ultimo elemento de la lista devuelve NULL", lista_ver_ultimo(lista) == NULL);
-    print_test("Ver el largo de la lista es 0", lista_largo(lista) == 0);
-
-    lista_destruir(lista, NULL);
-}
+//    print_test("La lista esta vacia", lista_esta_vacia(lista) == true);
+//    print_test("Borrar el primer elemento de la lista da NULL", lista_borrar_primero(lista) == NULL);
+//    print_test("Ver el primer elemento de la lista devuelve NULL", lista_ver_primero(lista) == NU//LL);
+//    print_test("Ver el ultimo elemento de la lista devuelve NULL", lista_ver_ultimo(lista) == NULL);
+//    print_test("Ver el largo de la lista es 0", lista_largo(lista) == 0);
+//
+//    lista_destruir(lista, NULL);
+//}
 
 static void prueba_listar_numeros(void){
     printf("INICIO DE LAS PRUEBAS DE LISTAR ALGUNOS NUMEROS\n");
@@ -298,9 +298,39 @@ void prueba_lista_iterador_externo_insertar_con_lista_varios_elemento() {
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
 }
+
+void prueba_lista_iterador_externo_borrar_elemento() {
+	lista_t * lista = lista_crear();
+	int v[10];
+	print_test("Se creo una lista con un elemento", lista_insertar_ultimo(lista,v+5) == true);
+	lista_iter_t * iter = lista_iter_crear(lista);
+	print_test("Se creo un iterador de lista", iter != NULL);
+	lista_iter_insertar(iter,v+4);
+	lista_iter_insertar(iter,v+3);
+	lista_iter_insertar(iter,v+3);
+	print_test("Se agrego 4 elementos a la lista",lista_iter_insertar(iter,v+2) == true);
+	
+	lista_iter_avanzar(iter);
+	print_test("Se eleminia el elemento repetido", lista_iter_borrar(iter) != NULL);
+	
+	lista_iter_destruir(iter);
+	iter = lista_iter_crear(lista);	
+
+	for (size_t i = 2; lista_iter_al_final(iter) == false ; i++) {
+		if (lista_iter_borrar(iter) != v+i) {
+			lista_iter_destruir(iter);
+			lista_destruir(lista,NULL);
+			return;
+		}
+	}
+	print_test("Todos los elemento de la lista coinciden", true);
+	lista_iter_destruir(iter);
+	lista_destruir(lista,NULL);
+}
+
 void pruebas_lista_estudiante(){
 	puts("PRUEBA DE LISTA VACIA");
-   	prueba_lista_vacia();
+   	//prueba_lista_vacia();
 
 	prueba_listar_NULL();
 
@@ -335,6 +365,9 @@ void pruebas_lista_estudiante(){
 
 	puts("Probar insertar un elemento en medio de la lista");
 	prueba_lista_iterador_externo_insertar_con_lista_varios_elemento();
+
+	puts("Probar borrar elemento en listas y verificar que cada uno coincide con la lista");
+	prueba_lista_iterador_externo_borrar_elemento();
 }
 
 #ifndef CORRECTOR
