@@ -3,18 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//static void prueba_lista_vacia(void){
-//    printf("INICIO DE LAS PRUEBAS CON LISTA VACIA\n");
-//    lista_t* lista = lista_crear();
+static void prueba_lista_vacia(void){
+   printf("INICIO DE LAS PRUEBAS CON LISTA VACIA\n");
+   lista_t* lista = lista_crear();
 
-//    print_test("La lista esta vacia", lista_esta_vacia(lista) == true);
-//    print_test("Borrar el primer elemento de la lista da NULL", lista_borrar_primero(lista) == NULL);
-//    print_test("Ver el primer elemento de la lista devuelve NULL", lista_ver_primero(lista) == NU//LL);
-//    print_test("Ver el ultimo elemento de la lista devuelve NULL", lista_ver_ultimo(lista) == NULL);
-//    print_test("Ver el largo de la lista es 0", lista_largo(lista) == 0);
-//
-//    lista_destruir(lista, NULL);
-//}
+   print_test("La lista esta vacia", lista_esta_vacia(lista) == true);
+   print_test("Borrar el primer elemento de la lista da NULL", lista_borrar_primero(lista) == NULL);
+   print_test("Ver el primer elemento de la lista devuelve NULL", lista_ver_primero(lista) == NULL);
+   print_test("Ver el ultimo elemento de la lista devuelve NULL", lista_ver_ultimo(lista) == NULL);
+   print_test("Ver el largo de la lista es 0", lista_largo(lista) == 0);
+
+   lista_destruir(lista, NULL);
+}
 
 static void prueba_listar_numeros(void){
     printf("INICIO DE LAS PRUEBAS DE LISTAR ALGUNOS NUMEROS\n");
@@ -41,9 +41,6 @@ static void prueba_listar_numeros(void){
     lista_destruir(lista, NULL);
 }
 
-
-/* Pruebas con iterador externo */
-
 static void prueba_listar_NULL(void){
     printf("INICIO DE PRUEBAS DE LISTAR NULL\n");
     lista_t* lista = lista_crear();
@@ -62,11 +59,9 @@ static void prueba_listar_NULL(void){
     lista_destruir(lista, NULL);
 }
 
-void prueba_listar_volumen(void){
+void prueba_listar_volumen(size_t tam){
     printf("INICIO DE PRUEBAS CON LISTA VOLUMEN\n");
     lista_t* lista = lista_crear();
-
-    size_t tam = 1000;
 
     int numeros[tam];
     for (int o = 0; o < tam; o++){
@@ -100,14 +95,14 @@ void prueba_lista_destruir_con_free(void){
     int* n = malloc(sizeof(int*));
     *n = 2;
     int* i = malloc(sizeof(int*));
-    *i = 123;
+    *i = 3;
 
     print_test("Se puedo listar al principio un elemento dinamico", lista_insertar_primero(lista, n) == true);
     print_test("Ver el largo de la lista es 1", lista_largo(lista) == 1);
     print_test("Se puedo listar al final un elemento dinamico", lista_insertar_ultimo(lista, i) == true);
     print_test("Ver el largo de la lista es 2", lista_largo(lista) == 2);
     print_test("El primero de la lista es 2", *(int*)lista_ver_primero(lista) == 2);
-    print_test("El ultimo de la lista es 3", *(int*)lista_ver_ultimo(lista) == 123);
+    print_test("El ultimo de la lista es 3", *(int*)lista_ver_ultimo(lista) == 3);
 
     lista_destruir(lista, free);
 }
@@ -116,13 +111,17 @@ void prueba_lista_iterador_externo_crear(void) {
     printf("INICIO DE LAS PRUEBAS DE CREAR ITERADOR EXTERNO\n");
 	lista_t * lista = lista_crear();
 
+	int i = 1;
+
 	print_test("Se creo una lista vacia",lista != NULL);
-	print_test("Se puedo insertar TP1",lista_insertar_primero(lista,"TP1") == true);
+	print_test("Se puedo insertar 1",lista_insertar_primero(lista, &i) == true);
 	lista_iter_t * iter = lista_iter_crear(lista);
 	print_test("Se creo un iterador externo",iter != NULL);
+	print_test("Se puedo avanzar el iterador", lista_iter_avanzar(iter));
     
 	lista_destruir(lista,NULL);
 	lista_iter_destruir(iter);
+	printf("Se pudo borrar la lista sin que se pierda memoria\n");
 }
 
 void prueba_lista_iterador_externo_crear_apunta_al_inicio(void) {
@@ -130,7 +129,8 @@ void prueba_lista_iterador_externo_crear_apunta_al_inicio(void) {
 	lista_t * lista = lista_crear();
 
 	print_test("Se creo una lista vacia",lista != NULL);
-	int dato[1];
+	int i = 1;
+	int* dato = &i;
 	print_test("Se inserto un elemento en la lista",lista_insertar_primero(lista,dato) == true);
 	lista_iter_t * iter = lista_iter_crear(lista);
 	print_test("Se creo un iterador externo",iter != NULL);
@@ -142,46 +142,56 @@ void prueba_lista_iterador_externo_crear_apunta_al_inicio(void) {
 
 void prueba_lista_iterador_externo_recorrer_lista() {
 	lista_t * lista = lista_crear();
-	int v[10];
-	for (size_t i = 0; i < 9; i++) {
-		if (lista_insertar_ultimo(lista,v+i) == false)
-			return;
-	}
-	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,v+9) == true);
+	int largo = 10;
+	int enteros[largo];
+    for (int o = 0; o < largo; o++){
+        enteros[o] = o;
+    }
+
+    bool ok = true;
+    for (size_t i = 0; i < largo; i++){
+        ok &= lista_insertar_ultimo(lista, &enteros[i]);
+    }
+    print_test("Se pudieron listar todos los elementos", ok);
+	
+	
 	lista_iter_t * iter = lista_iter_crear(lista);
 	print_test("Se creo un iterado y apunta al primer elemento de la lista", iter != NULL);
-	for (size_t i = 0; i < 9; i++) {
-		if (lista_iter_ver_actual(iter) != v+i) {
+	for (size_t i = 0; i < largo-1; i++) {
+		bool no_coinciden = lista_iter_ver_actual(iter) != enteros+i;
+		if (no_coinciden) {
+			print_test("Los datos obtenidos con el iterador no coinciden", no_coinciden);
 			lista_iter_destruir(iter);
 			lista_destruir(lista,NULL);
 			return;
 		}
 		lista_iter_avanzar(iter);
 	}
-	print_test("Lo datos obtenidos con el iterador coinciden con los cargados en la lista",lista_iter_ver_actual(iter) == v+9);
+	print_test("Lo datos obtenidos con el iterador coinciden con los cargados en la lista",lista_iter_ver_actual(iter) == enteros+largo-1);
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
 }
 
 void prueba_lista_iterador_externo_no_esta_al_final() {
 	lista_t * lista = lista_crear();
-	int v[10];
-	for (size_t i = 0; i < 9; i++) {
-		if (lista_insertar_ultimo(lista,v+i) == false) {
-			lista_destruir(lista,NULL);
-			return;
-		}
-	}
-	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,v+9) == true);
+	int largo = 10;
+	int enteros[largo];
+    for (int o = 0; o < largo; o++){
+        enteros[o] = o;
+    }
+
+    bool ok = true;
+    for (size_t i = 0; i < largo; i++){
+        ok &= lista_insertar_ultimo(lista, &enteros[i]);
+    }
+    print_test("Se pudieron listar todos los elementos", ok);
+
 	lista_iter_t * iter = lista_iter_crear(lista);
-	for (size_t i = 0; i < 8; i++) {
-		if (lista_iter_al_final(iter) == true) {
-			lista_iter_destruir(iter);
-			lista_destruir(lista,NULL);
-			return;
-		}
-	lista_iter_avanzar(iter);
+	ok = true;
+	for (size_t i = 0; i < largo-1; i++) {
+		ok &= lista_iter_avanzar(iter);
 	}
+	print_test("Se pudo avanzar toda la lista", ok);
 	print_test("Se recorrio la lista por 9 elementos y el iterador esta aun no llega al final", lista_iter_al_final(iter) == false);
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
@@ -236,24 +246,26 @@ void prueba_lista_iterador_interno_con_tope(void){
 
 void prueba_lista_iterador_externo_esta_al_final() {
 	lista_t * lista = lista_crear();
-	int v[10];
-	for (size_t i = 0; i < 9; i++) {
-		if (lista_insertar_ultimo(lista,v+i) == false) {
-			lista_destruir(lista,NULL);
-			return;
-		}
-	}
-	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,v+9) == true);
+	int largo = 10;
+	int enteros[largo];
+    for (int o = 0; o < largo; o++){
+        enteros[o] = o;
+    }
+
+    bool ok = true;
+    for (size_t i = 0; i < largo; i++){
+        ok &= lista_insertar_ultimo(lista, &enteros[i]);
+    }
+    print_test("Se pudieron listar todos los elementos", ok);
+
+	print_test("Se creo una lista con 10 elementos",lista_insertar_ultimo(lista,enteros+largo-1) == true);
 	lista_iter_t * iter = lista_iter_crear(lista);
+	ok = true;
 	for (size_t i = 0; i < 10; i++) {
-		if (lista_iter_al_final(iter) == true || lista_iter_ver_actual(iter) != v+i) {
-			lista_iter_destruir(iter);
-			lista_destruir(lista,NULL);
-			return;
-		}
-	lista_iter_avanzar(iter);
+		ok &= lista_iter_avanzar(iter);
 	}
-	lista_iter_avanzar(iter);
+	print_test("Se pudo avanzar toda la lista", ok);
+	print_test("Se puedo avanzar de nuevo", lista_iter_avanzar(iter) == true);
 	print_test("Se recorrio toda la lista con el iterador y estos coinciden con los que estan cargados en la lista", lista_iter_al_final(iter) == true);
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
@@ -262,48 +274,51 @@ void prueba_lista_iterador_externo_esta_al_final() {
 
 void prueba_lista_iterador_externo_insertar_con_lista_1_elemento() {
 	lista_t * lista = lista_crear();
-	lista_insertar_ultimo(lista,NULL);
-	print_test("Se creo una lista con 1 elemento", lista_insertar_ultimo(lista,NULL) == true);
+	int i = 1;
+	print_test("Se creo una lista con 1 elemento", lista_insertar_ultimo(lista, &i) == true);
 	lista_iter_t * iter = lista_iter_crear(lista);
-	int v[1];
-	print_test("Se agrego un elemento al inicio de la lista utilizando un iterador", lista_iter_insertar(iter,v) == true);
+	int largo = 1;
+	int enteros[largo];
+	print_test("Se agrego un elemento al inicio de la lista utilizando un iterador", lista_iter_insertar(iter,enteros) == true);
 	print_test("El iterador avanzo al siguiente elemento", lista_iter_avanzar(iter) == true);
 	print_test("El iterador no apunta al final de la lista", lista_iter_al_final(iter) == false);
-	print_test("El ultimo dato  coincide con el elemento inicial de la lista", lista_iter_ver_actual(iter) == NULL);
+	print_test("El ultimo dato coincide con el elemento inicial de la lista", lista_iter_ver_actual(iter) == &i);
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
 }
 
 void prueba_lista_iterador_externo_insertar_con_lista_varios_elemento() {
 	lista_t * lista = lista_crear();
-	int v[10];
-	lista_insertar_ultimo(lista,v);
-	lista_insertar_ultimo(lista,v+2);
-	lista_insertar_ultimo(lista,v+3);
-	print_test("Se creo una lista con 4 elemento", lista_insertar_ultimo(lista,v+4) == true);
+	int largo = 10;
+	int enteros[largo];
+	lista_insertar_ultimo(lista,enteros);
+	lista_insertar_ultimo(lista,enteros+2);
+	lista_insertar_ultimo(lista,enteros+3);
+	print_test("Se creo una lista con 4 elemento", lista_insertar_ultimo(lista,enteros+4) == true);
 	lista_iter_t * iter = lista_iter_crear(lista);
 	print_test("El iterador avanzo al siguiente elemento de la lista", lista_iter_avanzar(iter) == true);
 	print_test("El iterador no apunta al final de la lista", lista_iter_al_final(iter) == false);
-	print_test("Se inserto un elemento en la posicion actual utilizando un iterador", lista_iter_insertar(iter,v+1) == true);
+	print_test("Se inserto un elemento en la posicion actual utilizando un iterador", lista_iter_insertar(iter,enteros+1) == true);
 	lista_iter_destruir(iter);
 	iter = lista_iter_crear(lista);
 	for (size_t i = 0; i < 4; i++) {
-		if (lista_iter_ver_actual(iter) != v+i) {
+		if (lista_iter_ver_actual(iter) != enteros+i) {
 			lista_iter_destruir(iter);
 			lista_destruir(lista,NULL);
 		}
 		lista_iter_avanzar(iter);
 	}
-	print_test("EL dato se agrego correctamente en la lista", lista_iter_ver_actual(iter) == v+4);
+	print_test("EL dato se agrego correctamente en la lista", lista_iter_ver_actual(iter) == enteros+4);
 	lista_iter_destruir(iter);
 	lista_destruir(lista,NULL);
 }
 
 void prueba_lista_iterador_externo_borrar_elemento() {
 	lista_t * lista = lista_crear();
-	int v[10];
+	int largo = 10;
+	int v[largo];
 	print_test("Se creo una lista con un elemento", lista_insertar_ultimo(lista,v+5) == true);
-	lista_iter_t * iter = lista_iter_crear(lista);
+	lista_iter_t* iter = lista_iter_crear(lista);
 	print_test("Se creo un iterador de lista", iter != NULL);
 	lista_iter_insertar(iter,v+4);
 	lista_iter_insertar(iter,v+3);
@@ -330,11 +345,12 @@ void prueba_lista_iterador_externo_borrar_elemento() {
 
 void pruebas_lista_estudiante(){
 	puts("PRUEBA DE LISTA VACIA");
-   	//prueba_lista_vacia();
+   	prueba_lista_vacia();
 
 	prueba_listar_NULL();
 
-	prueba_listar_volumen();
+	size_t tam = 1000;
+	prueba_listar_volumen(tam);
 
 	prueba_lista_destruir_con_free();
 
